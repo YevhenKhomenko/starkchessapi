@@ -14,21 +14,20 @@ from datetime import timedelta
 import dj_database_url
 from pathlib import Path
 import environ
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env()
-environ.Env.read_env()
+# env = environ.Env()
+# environ.Env.read_env()
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-=m0n+=#7lo2r(70olo2lk)0d*%)cotd$z!9^!l8+*ib8fahmjd')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if env("DEBUG") == 'False':
-    DEBUG = False
-else:
-    DEBUG = True
+# DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
@@ -84,7 +83,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'SCbackend.wsgi.application'
 
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -95,8 +94,24 @@ DATABASES = {
         'PORT': env("DB_PORT"),
     }
 }
+"""
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
+    }
+}
 
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=500,
+        conn_health_checks=True,
+    )
 
 
 AUTH_PASSWORD_VALIDATORS = [
